@@ -2,10 +2,10 @@ package connectfour.main;
 
 
 import connectfour.game.Jatek;
-import connectfour.game.command.Paracskezelo;
+import connectfour.game.command.Parancskezelo;
 
 
-public class Main extends Jatek {
+public abstract class Main extends Jatek {
 
     /**
      * main.
@@ -14,8 +14,8 @@ public class Main extends Jatek {
     public static void main(final String[] args) {
         System.out.println("Udvozollek a Connect 4 jatekban!");
 
-        Paracskezelo parancskezelo = new Paracskezelo();
+        Parancskezelo parancskezelo = new Parancskezelo();
         parancskezelo.Start();  // parancs figyelese
 
-}
+    }
 }
