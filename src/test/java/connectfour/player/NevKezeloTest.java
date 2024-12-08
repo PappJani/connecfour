@@ -1,33 +1,29 @@
 package connectfour.player;
 
-import connectfour.player.NevKezelo;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class NevKezeloTest {
 
-    @Test
-    public void testNevBekeres() {
-        // Tesztbemenet szimulálása
-        String testInput = "TesztJatekos\n"; // A név most "TesztJatekos"
-        InputStream originalSystemIn = System.in; // Eredeti System.in elmentése
-        try {
-            // Átirányítjuk a System.in-t egy ByteArrayInputStream-re
-            System.setIn(new ByteArrayInputStream(testInput.getBytes()));
+  @Test
+  public void testNevBekeres() {
+    // Szimulált bemenet
+    String simulatedInput = "TesztJatekos\n";
+    InputStream originalSystemIn = System.in; // Eredeti System.in mentése
+    ByteArrayInputStream testInputStream = new ByteArrayInputStream(simulatedInput.getBytes());
+    System.setIn(testInputStream); // Szimulált bemenet beállítása
 
-            // A NevKezelo példányosítása és a bemenet átadása
-            NevKezelo nevKezelo = new NevKezelo();
+    // NevKezelo példány létrehozása
+    NevKezelo nevKezelo = new NevKezelo();
 
-            // A nev értékének lekérése
-            String nev = nevKezelo.getNev();
+    // Ellenőrzés
+    assertEquals("TesztJatekos", nevKezelo.getNev(), "The player's name should match the simulated input.");
 
-            // Ellenőrizni, hogy a név megegyezik-e a várt értékkel
-            assertEquals("TesztJatekos", nev); // Várt érték "TesztJatekos"
-        } finally {
-            // A teszt után visszaállítjuk a System.in-t az eredetire
-            System.setIn(originalSystemIn);
-        }
-    }
+    // Visszaállítjuk az eredeti System.in-t
+    System.setIn(originalSystemIn);
+  }
 }

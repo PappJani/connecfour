@@ -1,56 +1,71 @@
 package connectfour.table.coin;
 
-import connectfour.table.coin.Erme;
 import connectfour.table.TablaConf;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErmeTest {
 
-    @Test
-    public void testBedobas() {
-        // Létrehozzuk a teszt táblát (6 sor és 7 oszlop)
-        char[][] tabla = new char[6][7];
+  private Erme erme;
+  private char[][] tabla;
 
-        // A TablaConf.URES.getCharErtek() értéke (üres mező)
-        char uresErtek = TablaConf.URES.getCharErtek();
-        // Játékos 'X' karakterrel fog dobni
-        char jatekos = 'X';
-
-        // Kezdetben minden mező üres
-        for (int i = 0; i < tabla.length; i++) {
-            for (int j = 0; j < tabla[i].length; j++) {
-                tabla[i][j] = uresErtek;
-            }
-        }
-
-        // Erme objektum létrehozása
-        Erme erme = new Erme();
-
-        // Teszt 1: Bedobás egy üres oszlopba
-        int oszlop = 3; // A 3-as oszlopba dobunk
-        erme.Bedobas(tabla, oszlop, jatekos);
-
-        // Ellenőrizni, hogy a legalsó üres mezőbe (első sor) került a jel
-        assertEquals("Az 'X' játéknak a legalsó üres helyre kell kerülnie.", jatekos, tabla[5][oszlop]);
-
-        // Teszt 2: Bedobás egy második érmét ugyanabba az oszlopba
-        erme.Bedobas(tabla, oszlop, jatekos); // A második érmét ugyanabba az oszlopba dobjuk
-
-        // Ellenőrizni, hogy az új érmét a következő üres mezőbe tettük
-        assertEquals("A második érmének a következő üres helyre kell kerülni.", jatekos, tabla[4][oszlop]);
-
-        // Teszt 3: Bedobás egy teljes oszlopba
-        // Töltjük az oszlopot egészen a legfelső üres sorig
-        tabla[4][oszlop] = 'X';
-        tabla[3][oszlop] = 'X';
-        tabla[2][oszlop] = 'X';
-        tabla[1][oszlop] = 'X';
-
-        // Most az oszlop teljes, tehát nem dobhatunk bele többet
-        erme.Bedobas(tabla, oszlop, jatekos);
-
-        // Ellenőrizni, hogy az oszlop nem változott, mivel már tele van
-        assertEquals("A tábla oszlopa már tele van, ezért nem történt bedobás.", 'X', tabla[0][oszlop]);
+  @BeforeEach
+  public void setUp() {
+    erme = new Erme();
+    // 6x7-es Connect Four tábla, feltételezve az alapértelmezett beállításokat
+    tabla = new char[6][7];
+    for (int i = 0; i < tabla.length; i++) {
+      for (int j = 0; j < tabla[i].length; j++) {
+        tabla[i][j] = TablaConf.URES.getCharErtek(); // Üres karakter
+      }
     }
+  }
+
+  @Test
+  public void testBedobasInEmptyColumn() {
+    // Bedobás egy üres oszlopba
+    int oszlop = 3; // 4. oszlop (indexelve 0-tól)
+    char jatekos = 'X';
+
+    erme.bedobas(tabla, oszlop, jatekos);
+
+    // Ellenőrizzük, hogy a legalsó cella az oszlopban tartalmazza-e a játékost
+    assertEquals(jatekos, tabla[5][oszlop], "The coin should be placed in the bottom-most row of the column.");
+  }
+
+  @Test
+  public void testBedobasInPartiallyFilledColumn() {
+    // Előre feltöltjük az oszlopot részben
+    int oszlop = 2; // 3. oszlop
+    char jatekos1 = 'X';
+    char jatekos2 = 'O';
+
+    // Első bedobás
+    erme.bedobas(tabla, oszlop, jatekos1);
+    // Második bedobás
+    erme.bedobas(tabla, oszlop, jatekos2);
+
+    // Ellenőrizzük az oszlop állapotát
+    assertEquals(jatekos1, tabla[5][oszlop], "The first coin should be in the bottom-most row.");
+    assertEquals(jatekos2, tabla[4][oszlop], "The second coin should be above the first one.");
+  }
+
+  @Test
+  public void testBedobasInFullColumn() {
+    // Feltöltjük az oszlopot teljesen
+    int oszlop = 1; // 2. oszlop
+    char jatekos = 'X';
+
+    for (int i = 0; i < tabla.length; i++) {
+      erme.bedobas(tabla, oszlop, jatekos);
+    }
+
+    // Próbáljunk meg újabb érmét bedobni
+    erme.bedobas(tabla, oszlop, 'O');
+
+    // Ellenőrizzük, hogy nem történt változás (a legfelső sor tartalmazza az eredeti értéket)
+    assertEquals(jatekos, tabla[0][oszlop], "The column should remain unchanged when it is full.");
+  }
 }
