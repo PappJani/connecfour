@@ -1,38 +1,52 @@
 package connectfour.table.checker;
 
-import connectfour.table.checker.Oszlop;
 import connectfour.table.TablaConf;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OszlopTest {
 
-    @Test
-    public void testOszlopTele() {
-        // Létrehozzuk a teszt táblát
-        char[][] tabla = new char[6][7]; // A Connect 4 játékos táblája: 6 sor, 7 oszlop
+    private Oszlop oszlopChecker;
+    private char[][] table;
 
-        // A TablaConf.URES.getCharErtek() értéke
-        char uresErtek = TablaConf.URES.getCharErtek();
+    @BeforeEach
+    public void setUp() {
+        oszlopChecker = new Oszlop();
 
-        // A teszt oszlop
-        int oszlop = 3; // Az 3. oszlopot fogjuk tesztelni
-
-        // Kezdetben minden mező üres, tehát az oszlop nem tele
-        for (int i = 0; i < tabla.length; i++) {
-            for (int j = 0; j < tabla[i].length; j++) {
-                tabla[i][j] = uresErtek;
+        // Inicializálunk egy 6x7-es táblát (6 sor, 7 oszlop)
+        table = new char[6][7];
+        for (int i = 0; i < table.length; i++) {
+            for (int j = 0; j < table[i].length; j++) {
+                table[i][j] = TablaConf.URES.getCharErtek(); // Az üres karakterek feltöltése
             }
         }
+    }
 
-        // Tesztelés: Üres oszlop (nem tele)
-        Oszlop oszlopChecker = new Oszlop();
-        assertFalse("Az oszlopnak üresnek kell lennie", oszlopChecker.oszlopTele(tabla, oszlop));
+    @Test
+    public void testOszlopNemTele() {
+        // Egy üres oszlopot ellenőrzünk
+        int oszlop = 3; // 4. oszlop (indexelve 0-tól)
+        assertFalse(oszlopChecker.oszlopTele(table, oszlop), "An empty column should not be marked as full.");
+    }
 
-        // Most tegyünk valamit az oszlop első sorába, hogy "tele" legyen
-        tabla[0][oszlop] = 'X'; // Az oszlop első sorába tettünk egy 'X' karaktert
+    @Test
+    public void testOszlopTele() {
+        // Feltöltjük az oszlopot
+        int oszlop = 2; // 3. oszlop
+        for (int i = 0; i < table.length; i++) {
+            table[i][oszlop] = 'X'; // Feltöltjük az oszlopot 'X' karakterrel
+        }
+        assertTrue(oszlopChecker.oszlopTele(table, oszlop), "A fully filled column should be marked as full.");
+    }
 
-        // Tesztelés: Tele oszlop
-        assertTrue("Az oszlopnak tele kell lennie", oszlopChecker.oszlopTele(tabla, oszlop));
+    @Test
+    public void testOszlopReszbenTele() {
+        // Részben töltött oszlop
+        int oszlop = 5; // 6. oszlop
+        table[5][oszlop] = 'X'; // Csak az alsó cellát töltjük ki
+        assertFalse(oszlopChecker.oszlopTele(table, oszlop), "A partially filled column should not be marked as full.");
     }
 }
